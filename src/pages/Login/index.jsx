@@ -29,7 +29,7 @@ export const Login = () => {
 
   const onSubmit = async (data) => {
     const responce = await dispatch(fetchAuth(data));
-    console.log(responce);
+    //console.log(responce);
     if (!responce.payload) {
       return alert('Не удалось авторизоваться!');
     }
@@ -65,7 +65,7 @@ export const Login = () => {
           fullWidth
           {...register('password', { required: 'Введите верный пароль' })}
         />
-        <Button type="submit" size="large" variant="contained" fullWidth>
+        <Button disabled={!isValid} type="submit" size="large" variant="contained" fullWidth>
           Войти
         </Button>
       </form>

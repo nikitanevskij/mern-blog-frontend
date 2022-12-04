@@ -30,6 +30,17 @@ export const fetchAuthMe = createAsyncThunk('auth/fetchAuthMe', async () => {
   return data;
 });
 
+export const fetchRegister = createAsyncThunk('auth/register', async (obj, { rejectWithValue }) => {
+  try {
+    //@ts-ignore
+    const { data } = await axios.post('/auth/register', obj);
+    return data;
+  } catch (err) {
+    //@ts-ignore
+    return rejectWithValue(err.response.data);
+  }
+});
+
 export const fetchAuthSlice = createSlice({
   name: 'auth',
   initialState,
@@ -52,7 +63,7 @@ export const fetchAuthSlice = createSlice({
     builder.addCase(fetchAuth.rejected, (state, action) => {
       state.data = null;
       state.status = 'loading';
-      console.log(action.payload);
+      //console.log(action.payload);
     });
     //GET USER ME
     builder.addCase(fetchAuthMe.pending, (state) => {
@@ -64,6 +75,20 @@ export const fetchAuthSlice = createSlice({
       state.status = 'loaded';
     });
     builder.addCase(fetchAuthMe.rejected, (state) => {
+      state.data = null;
+      state.status = 'loading';
+    });
+    //REGISTER
+    builder.addCase(fetchRegister.pending, (state) => {
+      state.data = null;
+      state.status = 'loading';
+    });
+    builder.addCase(fetchRegister.fulfilled, (state, action) => {
+      state.data = action.payload;
+      state.status = 'loaded';
+      console.log('Успешная регистрация');
+    });
+    builder.addCase(fetchRegister.rejected, (state, action) => {
       state.data = null;
       state.status = 'loading';
     });

@@ -1,15 +1,19 @@
-import React from "react";
-import TextField from "@mui/material/TextField";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
-import SimpleMDE from "react-simplemde-editor";
+import React from 'react';
+import TextField from '@mui/material/TextField';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import SimpleMDE from 'react-simplemde-editor';
 
-import "easymde/dist/easymde.min.css";
-import styles from "./AddPost.module.scss";
+import 'easymde/dist/easymde.min.css';
+import styles from './AddPost.module.scss';
+import { useSelector } from 'react-redux';
+import { Navigate } from 'react-router-dom';
+import { isAuthSelect } from '../../redux/fetchAuthSlice';
 
 export const AddPost = () => {
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState('');
 
+  const isAuth = useSelector(isAuthSelect);
   const onChange = React.useCallback((value) => {
     setValue(value);
   }, []);
@@ -17,17 +21,21 @@ export const AddPost = () => {
   const options = React.useMemo(
     () => ({
       spellChecker: false,
-      maxHeight: "400px",
+      maxHeight: '400px',
       autofocus: true,
-      placeholder: "Введите текст...",
+      placeholder: 'Введите текст...',
       status: false,
       autosave: {
         enabled: true,
         delay: 1000,
       },
     }),
-    []
+    [],
   );
+
+  if (!isAuth) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <Paper style={{ padding: 30 }}>
@@ -42,18 +50,8 @@ export const AddPost = () => {
         placeholder="Заголовок статьи..."
         fullWidth
       />
-      <TextField
-        classes={{ root: styles.tags }}
-        variant="standard"
-        placeholder="Тэги"
-        fullWidth
-      />
-      <SimpleMDE
-        className={styles.editor}
-        value={value}
-        onChange={onChange}
-        options={options}
-      />
+      <TextField classes={{ root: styles.tags }} variant="standard" placeholder="Тэги" fullWidth />
+      <SimpleMDE className={styles.editor} value={value} onChange={onChange} options={options} />
       <div className={styles.buttons}>
         <Button size="large" variant="contained">
           Опубликовать

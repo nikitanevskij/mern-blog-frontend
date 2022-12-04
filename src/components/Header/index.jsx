@@ -22,14 +22,14 @@ export const Header = () => {
       <Container maxWidth="lg">
         <div className={styles.inner}>
           <Link className={styles.logo} to="/">
-            <div>ARCHAKOV BLOG</div>
+            <div>MERN BLOG</div>
           </Link>
           <div className={styles.buttons}>
             {isAuth ? (
               <>
-                <a href="/posts/create">
+                <Link to="/post/create">
                   <Button variant="contained">Написать статью</Button>
-                </a>
+                </Link>
                 <Button onClick={logoutUser} variant="contained" color="error">
                   Выйти
                 </Button>

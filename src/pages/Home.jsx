@@ -13,6 +13,7 @@ import { fetchAllPosts, fetchAllTags } from '../redux/fetchPostsSlice';
 export const Home = () => {
   const dispatch = useAppDispatch();
   const { posts, tags } = useSelector((state) => state.fetchPostsSlice);
+  const { data } = useSelector((state) => state.fetchAuthSlice);
 
   const isLoadingPosts = posts.status === 'loading';
   const isLoadingTags = tags.status === 'loading';
@@ -21,7 +22,7 @@ export const Home = () => {
     dispatch(fetchAllPosts());
     dispatch(fetchAllTags());
   }, []);
-
+  console.log(data);
   return (
     <>
       <Tabs style={{ marginBottom: 15 }} value={0} aria-label="basic tabs example">
@@ -45,7 +46,7 @@ export const Home = () => {
                 commentsCount={3}
                 tags={obj.tags}
                 isLoading={isLoadingPosts}
-                isEditable
+                isEditable={data?._id === obj.user._id}
               />
             ),
           )}
