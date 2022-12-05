@@ -67,6 +67,14 @@ export const fetchOnePost = createAsyncThunk<TPost, string>('posts/fetchOnePost'
   return data;
 });
 
+export const fetchDeletePost = createAsyncThunk<any, string>(
+  'posts/fetchDeletePost',
+  async (id) => {
+    const { data } = await axios.delete(`/posts/${id}`);
+    return data;
+  },
+);
+
 export const fetchPostsSlice = createSlice({
   name: 'posts',
   initialState,
@@ -110,6 +118,11 @@ export const fetchPostsSlice = createSlice({
     builder.addCase(fetchOnePost.rejected, (state) => {
       state.post.item = {};
       state.post.status = 'loading';
+    });
+    //DELETE POST
+    builder.addCase(fetchDeletePost.pending, (state, action) => {
+      //@ts-ignore
+      state.posts.items = state.posts.items.filter((obj) => obj._id !== action.meta.arg);
     });
   },
 });

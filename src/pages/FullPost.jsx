@@ -7,6 +7,7 @@ import { CommentsBlock } from '../components/CommentsBlock';
 import { useAppDispatch } from '../redux/store';
 import { fetchOnePost } from '../redux/fetchPostsSlice';
 import { useSelector } from 'react-redux';
+import ReactMarkdown from 'react-markdown';
 
 export const FullPost = () => {
   const dispatch = useAppDispatch();
@@ -31,7 +32,7 @@ export const FullPost = () => {
         user={{
           avatarUrl:
             'https://res.cloudinary.com/practicaldev/image/fetch/s--uigxYVRB--/c_fill,f_auto,fl_progressive,h_50,q_auto,w_50/https://dev-to-uploads.s3.amazonaws.com/uploads/user/profile_image/187971/a5359a24-b652-46be-8898-2c5df32aa6e0.png',
-          fullName: 'Keff',
+          fullName: post.item.user.fullName,
         }}
         createdAt={post.item.createdAt}
         viewsCount={post.item.viewsCount}
@@ -39,7 +40,7 @@ export const FullPost = () => {
         tags={post.item.tags}
         isFullPost
       >
-        <p>{post.item.text}</p>
+        <ReactMarkdown children={post.item.text} />
       </Post>
 
       <CommentsBlock
