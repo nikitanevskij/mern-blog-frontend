@@ -8,10 +8,12 @@ import axios from '../../axios';
 import 'easymde/dist/easymde.min.css';
 import styles from './AddPost.module.scss';
 import { useSelector } from 'react-redux';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate, useParams } from 'react-router-dom';
 import { isAuthSelect } from '../../redux/fetchAuthSlice';
 
 export const AddPost = () => {
+  const { id } = useParams();
+
   const inputFileRef = React.useRef(null);
   const navigate = useNavigate();
   const [value, setValue] = React.useState('');
@@ -21,12 +23,24 @@ export const AddPost = () => {
   const [loading, setLoading] = React.useState(false);
 
   const isAuth = useSelector(isAuthSelect);
+
+  React.useEffect(() => {
+    if (id) {
+      axios.get(`/posts/${id}`).then(({ data }) => {
+        setValue(data.text);
+        setTitle(data.title);
+        setTags(data.tags.join(','));
+        setImageUrl(data.imageUrl);
+      });
+    }
+  }, []);
   const handleChangeFile = async (e) => {
     try {
       const formData = new FormData(); //создаем для загрузки картинки
       const file = e.target.files[0];
       formData.append('image', file);
       const { data } = await axios.post('/upload', formData);
+
       setImageUrl(data.url);
     } catch (error) {
       console.warn(error);
@@ -64,10 +78,13 @@ export const AddPost = () => {
         imageUrl: imageUrl,
       };
 
-      const { data } = await axios.post('/posts', newPost);
-      const id = data._id;
-      console.log(data);
-      navigate(`/posts/${id}`);
+      const { data } = id
+        ? await axios.patch(`/posts/${id}`, newPost)
+        : await axios.post('/posts', newPost);
+
+      const _id = id ? id : data._id;
+
+      navigate(`/posts/${_id}`);
     } catch (err) {
       console.log(err);
       alert('Не удалось создать статью');
@@ -113,7 +130,7 @@ export const AddPost = () => {
       <SimpleMDE className={styles.editor} value={value} onChange={onChange} options={options} />
       <div className={styles.buttons}>
         <Button size="large" variant="contained" onClick={onSubmit}>
-          Опубликовать
+          {id ? 'Сохранить' : 'Опубликовать'}
         </Button>
         <Button size="large">Отмена</Button>
       </div>
